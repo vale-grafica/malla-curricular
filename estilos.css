@@ -1,13 +1,14 @@
-/* --- Configuración General --- */
+/* --- Configuración de Colores y Fuentes --- */
 :root {
-    --color-fondo: #f4f4f9;
+    --color-fondo: #f8f9fa; /* Gris muy claro */
     --color-ramo: #ffffff;
-    --color-ramo-aprobado: #d4edda;
-    --color-ramo-bloqueado: #e9ecef;
-    --color-texto: #343a40;
+    --color-ramo-aprobado: #f8d7da; /* Rosa pastel */
+    --color-borde-aprobado: #f5c6cb;
+    --color-ramo-bloqueado: #e9ecef; /* Gris claro */
+    --color-texto: #212529;
     --color-borde: #dee2e6;
     --color-sombra: rgba(0, 0, 0, 0.05);
-    --fuente-principal: 'Century Gothic', sans-serif;
+    --fuente-principal: 'Ink Free', cursive; /* Fuente solicitada */
 }
 
 body {
@@ -26,21 +27,22 @@ header {
 }
 
 h1 {
-    font-size: 2.5em;
-    font-weight: 300;
+    font-size: 2.8em;
+    font-weight: normal;
     position: relative;
     display: inline-block;
-    padding: 0 50px;
+    padding: 0 40px;
+    color: #343a40;
 }
 
-/* Decoración de flores lineales a los costados del título */
+/* Decoración a los costados del título */
 h1::before, h1::after {
-    content: '⚘'; /* Puedes usar un emoji o una imagen SVG */
-    font-size: 0.8em;
+    content: '～';
+    font-size: 1em;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    color: #cccccc;
+    color: #ced4da; /* Gris suave */
 }
 
 h1::before {
@@ -51,22 +53,21 @@ h1::after {
     right: 0;
 }
 
-
 /* --- Contenedor Principal de la Malla --- */
 #malla-curricular {
     display: flex;
-    flex-wrap: wrap; /* Permite que las columnas pasen abajo en pantallas pequeñas */
+    flex-wrap: wrap; /* Permite que las columnas se reordenen en pantallas pequeñas */
     gap: 20px;
     justify-content: center;
 }
 
 /* --- Columnas de Años --- */
 .año-columna {
-    background-color: #f8f9fa;
+    background-color: #fdfdff;
     border: 1px solid var(--color-borde);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 15px;
-    flex: 1; /* Todas las columnas ocupan el mismo espacio */
+    flex: 1; /* Permite que las columnas crezcan y se encojan */
     min-width: 280px; /* Ancho mínimo para cada columna */
     display: flex;
     flex-direction: column;
@@ -79,18 +80,20 @@ h1::after {
     font-weight: 600;
     border-bottom: 2px solid var(--color-borde);
     padding-bottom: 10px;
+    font-size: 1.5em;
 }
 
 /* --- Tarjetas de Ramos --- */
 .ramo {
     background-color: var(--color-ramo);
     border: 1px solid var(--color-borde);
+    border-left: 5px solid #ced4da; /* Borde izquierdo para un toque de diseño */
     border-radius: 6px;
     padding: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px var(--color-sombra);
-    user-select: none; /* Evita seleccionar el texto al hacer clic */
+    user-select: none; /* Evita la selección de texto al hacer clic */
 }
 
 .ramo:hover {
@@ -105,34 +108,36 @@ h1::after {
 }
 
 .ramo-nombre {
-    font-size: 1em;
+    font-size: 1.1em;
     margin-top: 5px;
 }
 
 /* --- Estados de los Ramos --- */
 .ramo.aprobado {
     background-color: var(--color-ramo-aprobado);
-    border-color: #c3e6cb;
+    border-color: var(--color-borde-aprobado);
+    border-left-color: #e58791; /* Rosa más oscuro */
     text-decoration: line-through;
-    color: #5a8e65;
+    color: #721c24;
 }
 
 .ramo.bloqueado {
     background-color: var(--color-ramo-bloqueado);
     opacity: 0.7;
     cursor: not-allowed;
+    border-left-color: #adb5bd;
 }
 
 .ramo.bloqueado:hover {
-    transform: none; /* Anula el efecto hover si está bloqueado */
+    transform: none;
     box-shadow: 0 2px 4px var(--color-sombra);
 }
 
 /* --- Diseño Responsivo --- */
 @media (max-width: 768px) {
     h1 {
-        font-size: 1.8em;
-        padding: 0 20px;
+        font-size: 2em;
+        padding: 0 15px;
     }
 
     #malla-curricular {
