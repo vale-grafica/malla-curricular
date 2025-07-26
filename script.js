@@ -2,8 +2,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. Definición de Datos de la Carrera ---
-    // Aquí se almacena toda la información de los ramos.
-    // Es más fácil de mantener que tenerlo directamente en el HTML.
+    // Almacena toda la información de los ramos y sus requisitos.
+    // Es mucho más fácil de mantener aquí que directamente en el HTML.
     const ramosData = [
         // 1er Año
         { id: '1276', nombre: 'Introducción al Diseño Gráfico', año: 1, requisitos: [] },
@@ -63,49 +63,41 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // --- 2. Estado de la Aplicación ---
-    // Carga los ramos aprobados desde localStorage.
-    // Si no hay nada guardado, empieza con un array vacío.
-    let aprobados = JSON.parse(localStorage.getItem('ramosAprobados')) || [];
+    // Carga los ramos aprobados desde localStorage. Si no hay, empieza con un array vacío.
+    let aprobados = JSON.parse(localStorage.getItem('ramosAprobadosDG')) || [];
     const mallaContainer = document.getElementById('malla-curricular');
 
     // --- 3. Funciones Principales ---
 
     /**
-     * Guarda el estado actual de los ramos aprobados en el localStorage del navegador.
+     * Guarda el array de ramos aprobados en el localStorage del navegador.
      */
     const guardarEstado = () => {
-        localStorage.setItem('ramosAprobados', JSON.stringify(aprobados));
+        localStorage.setItem('ramosAprobadosDG', JSON.stringify(aprobados));
     };
 
     /**
-     * Dibuja la malla curricular completa en el DOM, creando las columnas y las tarjetas de ramos.
+     * Dibuja la malla curricular en la página, creando las columnas y tarjetas de ramos.
      */
     const dibujarMalla = () => {
-        mallaContainer.innerHTML = ''; // Limpia la malla antes de volver a dibujarla.
-
-        const años = [1, 2, 3, 4, 'optativa']; // Define el orden de las columnas
+        mallaContainer.innerHTML = ''; // Limpia la malla antes de redibujar.
+        const años = [1, 2, 3, 4, 'optativa']; // Define el orden de las columnas.
 
         años.forEach(año => {
-            // Crea el div para la columna del año
             const columna = document.createElement('div');
             columna.className = 'año-columna';
             
-            // Crea el título de la columna
             const titulo = document.createElement('h2');
-            if (typeof año === 'number') {
-                titulo.textContent = `${año}° Año`;
-            } else {
-                titulo.textContent = 'Materias Optativas';
-            }
+            titulo.textContent = (typeof año === 'number') ? `${año}° Año` : 'Materias Optativas';
             columna.appendChild(titulo);
 
-            // Filtra los ramos que pertenecen a este año/columna
+            // Filtra los ramos que pertenecen a esta columna.
             const ramosDelAño = ramosData.filter(ramo => ramo.año === año);
             
             ramosDelAño.forEach(ramo => {
                 const ramoDiv = document.createElement('div');
                 ramoDiv.className = 'ramo';
-                ramoDiv.dataset.id = ramo.id; // Asigna el ID del ramo para identificarlo
+                ramoDiv.dataset.id = ramo.id; // Asigna el ID para identificarlo.
                 
                 ramoDiv.innerHTML = `
                     <div class="ramo-codigo">${ramo.id}</div>
@@ -115,25 +107,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             mallaContainer.appendChild(columna);
         });
-        actualizarEstadoVisual(); // Actualiza los colores y estados iniciales.
+
+        actualizarEstadoVisual(); // Aplica los estilos iniciales (aprobado, bloqueado, etc.).
     };
 
     /**
-     * Actualiza la apariencia de todos los ramos (aprobado, bloqueado, disponible).
+     * Actualiza la apariencia de todos los ramos según su estado.
      */
     const actualizarEstadoVisual = () => {
         document.querySelectorAll('.ramo').forEach(ramoDiv => {
             const id = ramoDiv.dataset.id;
-            const ramoData = getRamoData(id);
             
-            // Resetea las clases de estado
-            ramoDiv.classList.remove('aprobado', 'bloqueado');
+            ramoDiv.classList.remove('aprobado', 'bloqueado'); // Resetea las clases.
 
             if (aprobados.includes(id)) {
-                // Si el ramo está en la lista de aprobados, se marca como tal.
                 ramoDiv.classList.add('aprobado');
             } else {
-                // Si no está aprobado, se verifica si cumple los requisitos.
                 const { cumplido } = verificarRequisitos(id);
                 if (!cumplido) {
                     ramoDiv.classList.add('bloqueado');
@@ -145,48 +134,43 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Verifica si un ramo cumple con sus requisitos.
      * @param {string} id - El ID del ramo a verificar.
-     * @returns {object} - Un objeto con { cumplido: boolean, faltantes: array }.
+     * @returns {{cumplido: boolean, faltantes: object[]}} Objeto que indica si se cumplió y qué ramos faltan.
      */
     const verificarRequisitos = (id) => {
         const ramo = getRamoData(id);
-        if (!ramo) return { cumplido: true, faltantes: [] };
-
         const faltantes = [];
 
-        // Caso especial: PROYECTO FINAL DE TESIS
+        // Caso especial: PROYECTO FINAL DE TESIS.
         if (ramo.requisitos.includes('42-ramos')) {
             if (aprobados.length < 42) {
                 faltantes.push({ nombre: `Necesitas 42 ramos aprobados (tienes ${aprobados.length})` });
             }
         }
 
-        // Verifica otros requisitos
+        // Verifica el resto de los requisitos.
         ramo.requisitos.forEach(reqId => {
             if (reqId !== '42-ramos' && !aprobados.includes(reqId)) {
                 faltantes.push(getRamoData(reqId));
             }
         });
 
-        return {
-            cumplido: faltantes.length === 0,
-            faltantes: faltantes
-        };
+        return { cumplido: faltantes.length === 0, faltantes };
     };
 
     /**
-     * Obtiene los datos de un ramo a partir de su ID.
+     * Busca los datos de un ramo por su ID en el array principal.
      * @param {string} id - El ID del ramo.
-     * @returns {object|undefined} - El objeto del ramo o undefined si no se encuentra.
+     * @returns {object|undefined} El objeto del ramo o undefined si no lo encuentra.
      */
     const getRamoData = (id) => ramosData.find(r => r.id === id);
 
     /**
-     * Maneja el evento de clic en un ramo.
-     * @param {Event} e - El objeto del evento.
+     * Maneja el evento de clic sobre cualquier ramo de la malla.
+     * @param {Event} e - El objeto del evento de clic.
      */
     const manejarClicRamo = (e) => {
         const ramoDiv = e.target.closest('.ramo');
-        if (!ramoDiv) return; // Si el clic no fue en un ramo, no hace nada.
+        if (!ramoDiv) return; // Si no se hizo clic en un ramo, no hace nada.
 
         const id = ramoDiv.dataset.id;
         
@@ -194,14 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ramoDiv.classList.contains('aprobado')) {
             aprobados = aprobados.filter(aprobadoId => aprobadoId !== id);
         } else {
-            // Si está bloqueado, muestra una alerta con los requisitos faltantes.
+            // Si está bloqueado, muestra una alerta con los requisitos que faltan.
             const { cumplido, faltantes } = verificarRequisitos(id);
             if (!cumplido) {
-                const nombresFaltantes = faltantes.map(r => r.nombre).join('\n - ');
-                alert(`Para aprobar este ramo, primero necesitas aprobar:\n - ${nombresFaltantes}`);
+                const nombresFaltantes = faltantes.map(r => r.nombre).join('\n • ');
+                alert(`Para cursar esta materia, primero necesitas aprobar:\n\n • ${nombresFaltantes}`);
                 return;
             }
-            // Si cumple los requisitos, lo agrega a la lista de aprobados.
+            // Si cumple los requisitos, lo aprueba.
             aprobados.push(id);
         }
 
@@ -212,5 +196,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. Inicialización ---
     dibujarMalla(); // Dibuja la malla al cargar la página.
-    mallaContainer.addEventListener('click', manejarClicRamo); // Asigna el manejador de clics.
+    mallaContainer.addEventListener('click', manejarClicRamo); // Asigna un único listener de eventos para toda la malla.
 });
