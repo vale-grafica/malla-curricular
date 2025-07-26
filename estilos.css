@@ -1,1 +1,141 @@
+/* --- Configuración General --- */
+:root {
+    --color-fondo: #f4f4f9;
+    --color-ramo: #ffffff;
+    --color-ramo-aprobado: #d4edda;
+    --color-ramo-bloqueado: #e9ecef;
+    --color-texto: #343a40;
+    --color-borde: #dee2e6;
+    --color-sombra: rgba(0, 0, 0, 0.05);
+    --fuente-principal: 'Century Gothic', sans-serif;
+}
 
+body {
+    font-family: var(--fuente-principal);
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* --- Encabezado y Título --- */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 2.5em;
+    font-weight: 300;
+    position: relative;
+    display: inline-block;
+    padding: 0 50px;
+}
+
+/* Decoración de flores lineales a los costados del título */
+h1::before, h1::after {
+    content: '⚘'; /* Puedes usar un emoji o una imagen SVG */
+    font-size: 0.8em;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #cccccc;
+}
+
+h1::before {
+    left: 0;
+}
+
+h1::after {
+    right: 0;
+}
+
+
+/* --- Contenedor Principal de la Malla --- */
+#malla-curricular {
+    display: flex;
+    flex-wrap: wrap; /* Permite que las columnas pasen abajo en pantallas pequeñas */
+    gap: 20px;
+    justify-content: center;
+}
+
+/* --- Columnas de Años --- */
+.año-columna {
+    background-color: #f8f9fa;
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    padding: 15px;
+    flex: 1; /* Todas las columnas ocupan el mismo espacio */
+    min-width: 280px; /* Ancho mínimo para cada columna */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.año-columna h2 {
+    text-align: center;
+    margin-top: 0;
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-borde);
+    padding-bottom: 10px;
+}
+
+/* --- Tarjetas de Ramos --- */
+.ramo {
+    background-color: var(--color-ramo);
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px var(--color-sombra);
+    user-select: none; /* Evita seleccionar el texto al hacer clic */
+}
+
+.ramo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ramo-codigo {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.ramo-nombre {
+    font-size: 1em;
+    margin-top: 5px;
+}
+
+/* --- Estados de los Ramos --- */
+.ramo.aprobado {
+    background-color: var(--color-ramo-aprobado);
+    border-color: #c3e6cb;
+    text-decoration: line-through;
+    color: #5a8e65;
+}
+
+.ramo.bloqueado {
+    background-color: var(--color-ramo-bloqueado);
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.ramo.bloqueado:hover {
+    transform: none; /* Anula el efecto hover si está bloqueado */
+    box-shadow: 0 2px 4px var(--color-sombra);
+}
+
+/* --- Diseño Responsivo --- */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8em;
+        padding: 0 20px;
+    }
+
+    #malla-curricular {
+        flex-direction: column;
+    }
+}
